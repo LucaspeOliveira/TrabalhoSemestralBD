@@ -1,0 +1,2 @@
+Nomes: Gabriel Angelo Moretti, Júlio César Ferraz e Lucas Peres de Oliveira. 
+Descrição: O Tema do nosso trabalho será: uma loja de roupas que necessita de um sistema para manipulação do seu estoque. 

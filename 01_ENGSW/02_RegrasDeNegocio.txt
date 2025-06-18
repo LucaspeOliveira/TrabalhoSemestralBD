@@ -1,0 +1,3 @@
+RN01: Uma roupa pode apresentar um dos seguintes status no sistema: “Em Estoque”, “Fora de Estoque” e “Em necessidade de reposição”. 
+RN02: As roupas devem ser separadas em grupo pelo seu tipo. 
+RN03: Para roupas em circulação, o estoque mínimo não pode ser menor do que 5. Uma vez que o estoque atinja essa quantidade, seu status deve ser alterado no sistema para “Em necessidade de reposição”. 
