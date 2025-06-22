@@ -1,4 +1,0 @@
-CSU01: Adicionando nova roupa ao estoque: esse caso de uso representa o processo em que um funcionário pode criar uma instância de roupa nova ou adicionar um valor de quantidade a uma instância de roupa existente. 
-CSU02: Removendo roupa do estoque: este caso de uso é referente à remoção de um item que existe dentro do estoque, onde o funcionário escolherá qual item ele irá remover da lista do estoque. 
-CSU03: Atualizando roupa no estoque: este caso de uso representa o processo de atualização de um item dentro do estoque, onde o funcionário pode atualizar o nome do item, a marca, sua cor, entre outros atributos. 
-CSU04: Pesquisando roupa no estoque: este caso de uso se refere à pesquisa de itens dentro da lista de estoque, onde um funcionário irá poder pesquisar por nome, marca, ou tipo de roupa, gerando uma lista que corresponde aos resultados. 

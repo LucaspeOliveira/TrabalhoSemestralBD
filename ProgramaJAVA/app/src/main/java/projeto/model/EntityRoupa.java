@@ -1,9 +1,9 @@
-package projeto.entity;
+package projeto.model;
 
 public class EntityRoupa {
     // Variáveis:
     private int id;
-    private String tipoRoupa;
+    private EntityTipos tipo = new EntityTipos();
     private String marca;
     private String tamanho;
     private String genero;
@@ -15,11 +15,11 @@ public class EntityRoupa {
     public void setId(int id) {
         this.id = id;
     }
-    public String getTipoRoupa() {
-        return tipoRoupa;
+    public EntityTipos getTipo() {
+        return tipo;
     }
-    public void setTipoRoupa(String tipoRoupa) {
-        this.tipoRoupa = tipoRoupa;
+    public void setTipo(EntityTipos tipo) {
+        this.tipo = tipo;
     }
     public String getMarca() {
         return marca;

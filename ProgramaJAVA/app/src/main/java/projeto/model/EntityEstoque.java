@@ -1,4 +1,4 @@
-package projeto.entity;
+package projeto.model;
 
 import java.util.List;
 
