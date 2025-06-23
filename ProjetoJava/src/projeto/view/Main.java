@@ -16,6 +16,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        cont.confirma();
         this.primaryStage = stage;
 
         // Inicia na tela de login
@@ -62,7 +63,7 @@ public class Main extends Application {
         return new Scene(new StackPane(painel), 800, 500, Color.LIGHTGRAY);
     }
 
-    // Tela 2: Gerenciamento de Estoque
+    // Gerenciamento de Estoque
     private Scene telaGerenciamento() {
         TextField campoPesquisa = new TextField();
         campoPesquisa.setPromptText("Pesquisa");
@@ -113,7 +114,7 @@ public class Main extends Application {
 
     }
 
-    // Tela 3: Pesquisa Detalhada
+    // Pesquisa Detalhada
     private Scene telaPesquisaDetalhada() {
         TextField campoPesquisa = new TextField();
         campoPesquisa.setPromptText("Pesquisa");
@@ -153,7 +154,7 @@ public class Main extends Application {
         return new Scene(new StackPane(painel), 800, 500, Color.LIGHTGRAY);
     }
 
-    // Tela 4: Listagem de Estoque
+    // Listagem de Estoque
     private Scene telaListagemEstoque() {
         FlowPane gridRoupas = new FlowPane();
         gridRoupas.setHgap(20);
@@ -197,7 +198,7 @@ public class Main extends Application {
         return new Scene(layout, 800, 500, Color.LIGHTGRAY);
     }
 
-    // Tela 5: Modificação de Peça
+    // Modificação de Peça
     private Scene telaModificarPeca() {
         // Área de informações (pode ser substituída por imagem ou preview futuramente)
         TextArea infoRoupa = new TextArea("Informações da Roupa");
@@ -256,7 +257,7 @@ public class Main extends Application {
         return new Scene(painel, 800, 500, Color.LIGHTGRAY);
     }
 
-    // Tela 6: Adicionar Roupa
+    // Adicionar Roupa
     private Scene telaAdicionarRoupa() {
         // Campo Nome
         Label lblNome = new Label("Nome:");
@@ -343,7 +344,7 @@ public class Main extends Application {
         return new Scene(layout, 800, 500, Color.LIGHTGRAY);
     }
 
-    // Tela 7: Exclusão de Roupa 
+    // Exclusão de Roupa 
     private Scene telaExcluirRoupa() {
         // Campo de ID
         Label lblID = new Label("Informe o ID:");
