@@ -1,9 +1,3 @@
-### Regras de Negócio:
-RN01: Uma roupa pode apresentar um dos seguintes status no sistema: “Em Estoque”, “Fora de Estoque” e “Em necessidade de reposição”. 
-
-RN02: As roupas devem ser separadas em grupo pelo seu tipo. 
-
-RN03: Para roupas em circulação, o estoque mínimo não pode ser menor do que 5. Uma vez que o estoque atinja essa quantidade, seu status deve ser alterado no sistema para “Em necessidade de reposição”. 
 ### Requisitos:
 RF01: O sistema deve ser capaz de conseguir cadastrar novos itens. 
 
@@ -16,8 +10,6 @@ RF04: O sistema deve mostrar as informações de cada item, como nome da marca, 
 RF05: O sistema deve comportar a capacidade de cancelar a alteração do estado atual de uma instancia de seus itens a qualquer momento e retornar ao seu estado anterior. 
 
 RF06: O sistema deve permitir a busca de um produto pelos seus atributos. 
-
-RF07: O sistema deve alterar o status do produto de forma automática. 
 
 ### Descrição dos casos de Uso:
 CSU01: Adicionando nova roupa ao estoque: esse caso de uso representa o processo em que um funcionário pode criar uma instância de roupa nova ou adicionar um valor de quantidade a uma instância de roupa existente. 
