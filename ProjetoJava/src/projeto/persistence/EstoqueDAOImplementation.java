@@ -93,14 +93,30 @@ public class EstoqueDAOImplementation implements EstoqueDAO {
 
     @Override
     public void excluirRoupa(int idRoupa) throws SQLException, ClassNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'excluirRoupa'");
+        Connection con = gDao.getConnection();
+        String sql = "DELETE roupa WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, idRoupa);
+        ps.execute();
+        ps.close();
+        con.close();
     }
 
     @Override
     public void adicionarRoupa(EntityRoupa roupa) throws SQLException, ClassNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'adicionarRoupa'");
+        Connection con = gDao.getConnection();
+        String sql = "INSERT INTO roupa VALUES (?, ?, ?, ?, ?, ?, ?) ";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, roupa.getId());
+        ps.setString(2, roupa.getTipo());
+        ps.setInt(3, roupa.getIdEstoque());
+        ps.setString(4, roupa.getMarca());
+        ps.setString(5, roupa.getTamanho());
+        ps.setString(6, roupa.getGenero());
+        ps.setInt(7, roupa.getQuantidade());
+        ps.execute();
+        ps.close();
+        con.close();
     }
 
     @Override
