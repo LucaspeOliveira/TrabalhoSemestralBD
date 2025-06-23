@@ -7,7 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import projeto.model.EntityDistribuidora;
 import projeto.model.EntityEstoque;
+import projeto.model.EntityFilial;
+import projeto.model.EntityFuncionario;
 import projeto.model.EntityRoupa;
 
 public class EstoqueDAOImplementation implements EstoqueDAO {
@@ -39,6 +42,7 @@ public class EstoqueDAOImplementation implements EstoqueDAO {
             }
             rs.close();
             ps.close();
+            con.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,26 +104,87 @@ public class EstoqueDAOImplementation implements EstoqueDAO {
     }
 
     @Override
-    public void preencherEstoque() throws SQLException, ClassNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'preencherEstoque'");
+    public EntityEstoque preencherEstoque() throws SQLException, ClassNotFoundException {
+        EntityEstoque ent = new EntityEstoque();
+        Connection con = gDao.getConnection();
+        String sql = "SELECT * FROM estoque";
+        PreparedStatement ps;
+        try{
+            ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            ent.setId(rs.getInt("id"));
+            ent.setIdFilial(rs.getInt("idFilial"));
+            rs.close();
+            ps.close();
+            con.close();
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return ent;
     }
 
     @Override
-    public void preencherFilial() throws SQLException, ClassNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'preencherFilial'");
+    public EntityFilial preencherFilial() throws SQLException, ClassNotFoundException {
+        EntityFilial fili = new EntityFilial();
+        Connection con = gDao.getConnection();
+        String sql = "SELECT * FROM filialLoja";
+        PreparedStatement ps;
+        try{
+            ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            fili.setId(rs.getInt("id"));
+            fili.setIdDistribuidora(rs.getInt("idDist"));
+            rs.close();
+            ps.close();
+            con.close();
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return fili;
     }
 
     @Override
-    public void preencherDistribuidora() throws SQLException, ClassNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'preencherDistribuidora'");
+    public EntityDistribuidora preencherDistribuidora() throws SQLException, ClassNotFoundException {
+        EntityDistribuidora dist = new EntityDistribuidora();
+        Connection con = gDao.getConnection();
+        String sql = "SELECT * FROM distribuidora";
+        PreparedStatement ps;
+        try{
+            ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            dist.setId(rs.getInt("id"));
+            dist.setTipoRoupa(rs.getString("tipoRoupaDist"));
+            rs.close();
+            ps.close();
+            con.close();
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return dist;
     }
 
     @Override
-    public void preencherFuncionario() throws SQLException, ClassNotFoundException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'preencherFuncionario'");
+    public EntityFuncionario preencherFuncionario() throws SQLException, ClassNotFoundException {
+        EntityFuncionario func = new EntityFuncionario();
+        Connection con = gDao.getConnection();
+        String sql = "SELECT * FROM distribuidora";
+        PreparedStatement ps;
+        try{
+            ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            func.setId(rs.getInt("id"));
+            func.setNome(rs.getString("nome"));
+            func.setIdEstoque(rs.getInt("idEstoque"));
+            rs.close();
+            ps.close();
+            con.close();
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return func;
     }
 }
