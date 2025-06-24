@@ -5,7 +5,7 @@ RF02: O sistema deve ser capaz de alterar os itens existentes em cada grupo.
 
 RF03: O sistema deve ser capaz de excluir os itens que foram adicionados previamente. 
 
-RF04: O sistema deve mostrar as informações de cada item, como nome da marca, tipo, cor etc. 
+RF04: O sistema deve mostrar as informações de cada item, como nome da marca, tipo, etc. 
 
 RF05: O sistema deve comportar a capacidade de cancelar a alteração do estado atual de uma instancia de seus itens a qualquer momento e retornar ao seu estado anterior. 
 
