@@ -1,11 +1,15 @@
 package projeto.view;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import projeto.controller.ClassController;
+import projeto.model.EntityRoupa;
 import javafx.geometry.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -15,10 +19,8 @@ public class Main extends Application {
     private Stage primaryStage;
 
     @Override
-    public void start(Stage stage) {
-        cont.confirma();
+    public void start(Stage stage) throws SQLException, ClassNotFoundException {
         this.primaryStage = stage;
-
         // Inicia na tela de login
         primaryStage.setTitle("Sistema de Estoque");
         primaryStage.setScene(telaLogin());
@@ -26,7 +28,7 @@ public class Main extends Application {
     }
 
     // Tela 1: Login
-    private Scene telaLogin() {
+    private Scene telaLogin() throws SQLException, ClassNotFoundException {
         Label titulo = new Label("Sistema de Estoque");
         titulo.setFont(new Font("Arial", 20));
         titulo.setTextFill(Color.BLACK);
@@ -41,7 +43,11 @@ public class Main extends Application {
         btnAcessar.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
         btnAcessar.setMinWidth(100);
         btnAcessar.setOnAction(e -> {
-            primaryStage.setScene(telaGerenciamento());
+            try {
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }); // troca de cena
 
         Button btnSair = new Button("Sair");
@@ -64,7 +70,7 @@ public class Main extends Application {
     }
 
     // Gerenciamento de Estoque
-    private Scene telaGerenciamento() {
+    private Scene telaGerenciamento() throws SQLException, ClassNotFoundException {
         TextField campoPesquisa = new TextField();
         campoPesquisa.setPromptText("Pesquisa");
 
@@ -78,17 +84,44 @@ public class Main extends Application {
         Button btnAdicionar = new Button("Adicionar Roupa");
         Button btnVoltar = new Button("Voltar");
 
-        botaoPesquisar.setOnAction(e -> primaryStage.setScene(telaPesquisaDetalhada()));
-        btnListar.setOnAction(e -> primaryStage.setScene(telaListagemEstoque()));
-        btnAdicionar.setOnAction(e -> primaryStage.setScene(telaAdicionarRoupa()));
-        btnRemover.setOnAction(e -> primaryStage.setScene(telaExcluirRoupa()));
+        botaoPesquisar.setOnAction(e -> {
+            primaryStage.setScene(telaPesquisaDetalhada(campoPesquisa.getText()));
+        });
+        btnListar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaListagemEstoque());
+            } catch (ClassNotFoundException | SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
+        btnAdicionar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaAdicionarRoupa());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                ;
+            }
+        });
+        btnRemover.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaExcluirRoupa());
+            } catch (ClassNotFoundException | SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
 
         btnListar.setMinWidth(150);
         btnRemover.setMinWidth(150);
         btnAdicionar.setMinWidth(150);
         btnVoltar.setMinWidth(80);
 
-        btnVoltar.setOnAction(e -> primaryStage.setScene(telaLogin())); // volta para tela 1
+        btnVoltar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaLogin());
+            } catch (ClassNotFoundException | SQLException e1) {
+                e1.printStackTrace();
+            }
+        }); // volta para tela 1
 
         GridPane gridBotoes = new GridPane();
         gridBotoes.setHgap(40);
@@ -115,21 +148,38 @@ public class Main extends Application {
     }
 
     // Pesquisa Detalhada
-    private Scene telaPesquisaDetalhada() {
+    private Scene telaPesquisaDetalhada(String pesquisa) {
         TextField campoPesquisa = new TextField();
         campoPesquisa.setPromptText("Pesquisa");
         campoPesquisa.setMinWidth(400);
-
-        Button botaoBuscar = new Button("🔍");
-        botaoBuscar.setOnAction(e -> primaryStage.setScene(telaPesquisaDetalhada()));
-
-        HBox barraPesquisa = new HBox(5, campoPesquisa, botaoBuscar);
-        barraPesquisa.setAlignment(Pos.CENTER);
-        barraPesquisa.setPadding(new Insets(20));
+        campoPesquisa.setText(pesquisa); // mantém o valor pesquisado
 
         TextArea resultado = new TextArea();
         resultado.setEditable(false);
         resultado.setPrefHeight(300);
+
+        // Pesquisa e preenche a caixa de texto
+        EntityRoupa roupa = cont.pesquisar(pesquisa);
+        if (roupa.getId() != 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("ID: ").append(roupa.getId()).append("\n");
+            sb.append("Tipo: ").append(roupa.getTipo()).append("\n");
+            sb.append("Estoque ID: ").append(roupa.getIdEstoque()).append("\n");
+            sb.append("Marca: ").append(roupa.getMarca()).append("\n");
+            sb.append("Tamanho: ").append(roupa.getTamanho()).append("\n");
+            sb.append("Gênero: ").append(roupa.getGenero()).append("\n");
+            sb.append("Quantidade: ").append(roupa.getQuantidade()).append("\n");
+            resultado.setText(sb.toString());
+        } else {
+            resultado.setText("Nenhuma roupa encontrada para: \"" + pesquisa + "\"");
+        }
+
+        Button botaoBuscar = new Button("🔍");
+        botaoBuscar.setOnAction(e -> primaryStage.setScene(telaPesquisaDetalhada(campoPesquisa.getText())));
+
+        HBox barraPesquisa = new HBox(5, campoPesquisa, botaoBuscar);
+        barraPesquisa.setAlignment(Pos.CENTER);
+        barraPesquisa.setPadding(new Insets(20));
 
         VBox layout = new VBox(10, barraPesquisa, resultado);
         layout.setAlignment(Pos.TOP_CENTER);
@@ -140,7 +190,13 @@ public class Main extends Application {
         btnVoltar.setMinWidth(80);
         btnVoltar.setFont(new Font(14));
         btnVoltar.setTextFill(Color.BLACK);
-        btnVoltar.setOnAction(e -> primaryStage.setScene(telaGerenciamento()));
+        btnVoltar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
 
         HBox boxVoltar = new HBox(btnVoltar);
         boxVoltar.setPadding(new Insets(10));
@@ -155,23 +211,33 @@ public class Main extends Application {
     }
 
     // Listagem de Estoque
-    private Scene telaListagemEstoque() {
+    private Scene telaListagemEstoque() throws SQLException, ClassNotFoundException {
         FlowPane gridRoupas = new FlowPane();
         gridRoupas.setHgap(20);
         gridRoupas.setVgap(20);
         gridRoupas.setPadding(new Insets(10));
         gridRoupas.setPrefWrapLength(750); // Quebra de linha automática
 
-        for (int i = 1; i <= 20; i++) {
+        List<EntityRoupa> lista = cont.listar(); // busca roupas
+
+        for (EntityRoupa roupa : lista) {
             VBox card = new VBox(5);
             card.setPadding(new Insets(10));
             card.setAlignment(Pos.CENTER);
             card.setStyle("-fx-border-color: black; -fx-background-color: #d3d3d3;");
             card.setPrefSize(100, 120);
+            String id = "";
+            id += (roupa.getId());
+            Label nomeRoupa = new Label(id);
 
-            Label nomeRoupa = new Label("Roupa " + i);
             Button btnModificar = new Button("Modificar");
-            btnModificar.setOnAction(e -> primaryStage.setScene(telaModificarPeca()));
+            btnModificar.setOnAction(e -> {
+                try {
+                    primaryStage.setScene(telaModificarPeca(roupa));
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+            });
 
             card.getChildren().addAll(nomeRoupa, btnModificar);
             gridRoupas.getChildren().add(card);
@@ -185,7 +251,13 @@ public class Main extends Application {
         btnVoltar.setMinWidth(100);
         btnVoltar.setFont(new Font(14));
         btnVoltar.setTextFill(Color.BLACK);
-        btnVoltar.setOnAction(e -> primaryStage.setScene(telaGerenciamento()));
+        btnVoltar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
 
         HBox boxVoltar = new HBox(btnVoltar);
         boxVoltar.setAlignment(Pos.CENTER);
@@ -199,11 +271,22 @@ public class Main extends Application {
     }
 
     // Modificação de Peça
-    private Scene telaModificarPeca() {
-        // Área de informações (pode ser substituída por imagem ou preview futuramente)
-        TextArea infoRoupa = new TextArea("Informações da Roupa");
+    private Scene telaModificarPeca(EntityRoupa roupa) throws SQLException, ClassNotFoundException {
+        EntityRoupa ropa = new EntityRoupa();
+        TextArea infoRoupa = new TextArea();
         infoRoupa.setPrefSize(300, 300);
         infoRoupa.setEditable(false);
+        if (roupa.getId() != 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("ID: ").append(roupa.getId()).append("\n");
+            sb.append("Tipo: ").append(roupa.getTipo()).append("\n");
+            sb.append("Estoque ID: ").append(roupa.getIdEstoque()).append("\n");
+            sb.append("Marca: ").append(roupa.getMarca()).append("\n");
+            sb.append("Tamanho: ").append(roupa.getTamanho()).append("\n");
+            sb.append("Gênero: ").append(roupa.getGenero()).append("\n");
+            sb.append("Quantidade: ").append(roupa.getQuantidade()).append("\n");
+            infoRoupa.setText(sb.toString());
+        }
 
         // Campo Marca
         Label lblMarca = new Label("Marca:");
@@ -231,6 +314,20 @@ public class Main extends Application {
         btnModificar.setFont(new Font(14));
         btnModificar.setMinWidth(120);
         btnModificar.setStyle("-fx-background-color: #66cccc; -fx-border-color: black;");
+        btnModificar.setOnAction(e -> {
+            ropa.setMarca(campoMarca.getText());
+            ropa.setTipo(campoTipo.getText());
+            ropa.setTamanho(campoTamanho.getText());
+            ropa.setId(roupa.getId());
+            ropa.setGenero(roupa.getGenero());
+            try {
+                cont.alterar(ropa);
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            
+        });
 
         VBox colunaDireita = new VBox(20, boxMarca, boxTipo, boxTamanho, btnModificar);
         colunaDireita.setAlignment(Pos.CENTER);
@@ -243,7 +340,13 @@ public class Main extends Application {
         // Botão Voltar
         Button btnVoltar = new Button("Voltar");
         btnVoltar.setMinWidth(80);
-        btnVoltar.setOnAction(e -> primaryStage.setScene(telaListagemEstoque()));
+        btnVoltar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaListagemEstoque());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
 
         HBox boxVoltar = new HBox(btnVoltar);
         boxVoltar.setPadding(new Insets(10));
@@ -258,16 +361,8 @@ public class Main extends Application {
     }
 
     // Adicionar Roupa
-    private Scene telaAdicionarRoupa() {
-        // Campo Nome
-        Label lblNome = new Label("Nome:");
-        TextField campoNome = new TextField();
-        campoNome.setPromptText("Adicionar nome");
-        campoNome.setMinWidth(600);
-
-        VBox boxNome = new VBox(5, lblNome, campoNome);
-        boxNome.setPadding(new Insets(10));
-
+    private Scene telaAdicionarRoupa() throws SQLException, ClassNotFoundException {
+    
         // Campo Marca
         Label lblMarca = new Label("Marca:");
         TextField campoMarca = new TextField();
@@ -290,7 +385,6 @@ public class Main extends Application {
         comboTipo.getItems().addAll("Camisa", "Calça", "Jaqueta", "Vestido", "Outro");
         comboTipo.setPromptText("Selecionar Tipo");
         comboTipo.setMinWidth(150);
-
         VBox boxTipo = new VBox(5, lblTipo, comboTipo);
 
         // Campo Quantidade
@@ -300,6 +394,7 @@ public class Main extends Application {
         campoQuantidade.setMinWidth(200);
 
         VBox boxQuantidade = new VBox(5, lblQuantidade, campoQuantidade);
+
 
         // RadioButtons de Gênero
         Label lblGenero = new Label("Gênero:");
@@ -319,16 +414,35 @@ public class Main extends Application {
         // Botão Salvar
         Button btnSalvar = new Button("Salvar");
         btnSalvar.setMinWidth(150);
+        btnSalvar.setOnAction(e -> {
+            EntityRoupa roupa = new EntityRoupa();
+            Toggle selectedToggle = grupoGenero.getSelectedToggle();
+            RadioButton selectedRadioButton = (RadioButton) selectedToggle;
+            String generoSelecionado = selectedRadioButton.getText();
+            roupa.setGenero(generoSelecionado);
+            roupa.setMarca(campoMarca.getText());
+            roupa.setQuantidade(Integer.parseInt(campoQuantidade.getText()));
+            roupa.setTipo(comboTipo.getValue());
+            roupa.setTamanho(campoTamanho.getText());
+            try {
+                cont.addRoupa(roupa);
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
 
         // Botão Voltar
         Button btnVoltar = new Button("Voltar");
-        btnVoltar.setOnAction(e -> primaryStage.setScene(telaGerenciamento()));
-
-        // Esquerda
+        btnVoltar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
         VBox esquerda = new VBox(20, boxMarca, boxTamanho, boxTipo);
         esquerda.setAlignment(Pos.CENTER_LEFT);
-
-        // Direita
         VBox direita = new VBox(20, boxQuantidade, boxGenero, btnSalvar);
         direita.setAlignment(Pos.CENTER_RIGHT);
 
@@ -336,7 +450,7 @@ public class Main extends Application {
         centro.setAlignment(Pos.CENTER);
         centro.setPadding(new Insets(20));
 
-        VBox layout = new VBox(20, boxNome, centro, btnVoltar);
+        VBox layout = new VBox(20, centro, btnVoltar);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.TOP_CENTER);
         layout.setStyle("-fx-background-color: #808080; -fx-border-color: black; -fx-border-width: 2px;");
@@ -344,8 +458,8 @@ public class Main extends Application {
         return new Scene(layout, 800, 500, Color.LIGHTGRAY);
     }
 
-    // Exclusão de Roupa 
-    private Scene telaExcluirRoupa() {
+    // Exclusão de Roupa
+    private Scene telaExcluirRoupa() throws SQLException, ClassNotFoundException {
         // Campo de ID
         Label lblID = new Label("Informe o ID:");
         TextField campoID = new TextField();
@@ -353,11 +467,7 @@ public class Main extends Application {
 
         VBox boxID = new VBox(5, lblID, campoID);
         boxID.setAlignment(Pos.CENTER_LEFT);
-
-        // TextArea de informações (preview)
-        TextArea infoRoupa = new TextArea("Informações da roupa serão exibidas aqui...");
-        infoRoupa.setPrefSize(400, 300);
-        infoRoupa.setEditable(false);
+        
 
         // Botão Excluir
         Button btnExcluir = new Button("Excluir");
@@ -365,17 +475,32 @@ public class Main extends Application {
         btnExcluir.setFont(new Font(14));
         btnExcluir.setTextFill(Color.WHITE);
         btnExcluir.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        btnExcluir.setOnAction(e -> {
+            int id = Integer.parseInt(campoID.getText());
+            cont.excluiRoupa(id);
+            try {
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
 
         VBox colunaDireita = new VBox(30, boxID, btnExcluir);
         colunaDireita.setAlignment(Pos.CENTER_LEFT);
 
-        HBox centro = new HBox(40, infoRoupa, colunaDireita);
+        HBox centro = new HBox(40, colunaDireita);
         centro.setAlignment(Pos.CENTER);
         centro.setPadding(new Insets(20));
 
         // Botão Voltar
         Button btnVoltar = new Button("Voltar");
-        btnVoltar.setOnAction(e -> primaryStage.setScene(telaGerenciamento()));
+        btnVoltar.setOnAction(e -> {
+            try {
+                primaryStage.setScene(telaGerenciamento());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
 
         HBox boxVoltar = new HBox(btnVoltar);
         boxVoltar.setAlignment(Pos.BOTTOM_LEFT);
@@ -389,7 +514,7 @@ public class Main extends Application {
         return new Scene(painel, 800, 500, Color.LIGHTGRAY);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         launch(args);
     }
 }

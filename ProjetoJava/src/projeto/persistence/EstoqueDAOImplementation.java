@@ -77,15 +77,12 @@ public class EstoqueDAOImplementation implements EstoqueDAO {
     @Override
     public void atualizarRoupa(EntityRoupa roupa) throws SQLException, ClassNotFoundException {
         Connection con = gDao.getConnection();
-        String sql = "UPDATE roupa SET id = ?, tipoRoupa = ?, idEstoque = ?, marca = ?, tamanho = ?, genero = ?, quantidade = ? WHERE codigo = ?";
+        String sql = "UPDATE roupa SET tipoRoupa = ?, marca = ?, tamanho = ? WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(sql.toString());
-        ps.setInt(1, roupa.getId());
-        ps.setString(2, roupa.getTipo());
-        ps.setInt(3, roupa.getIdEstoque());
-        ps.setString(4, roupa.getMarca());
-        ps.setString(5, roupa.getTamanho());
-        ps.setString(6, roupa.getGenero());
-        ps.setInt(7, roupa.getQuantidade());
+        ps.setString(1, roupa.getTipo());
+        ps.setString(2, roupa.getMarca());
+        ps.setString(3, roupa.getTamanho());
+        ps.setInt(4, roupa.getId());
         ps.execute();
         ps.close();
         con.close();
@@ -105,15 +102,14 @@ public class EstoqueDAOImplementation implements EstoqueDAO {
     @Override
     public void adicionarRoupa(EntityRoupa roupa) throws SQLException, ClassNotFoundException {
         Connection con = gDao.getConnection();
-        String sql = "INSERT INTO roupa VALUES (?, ?, ?, ?, ?, ?, ?) ";
+        String sql=  "INSERT INTO roupa VALUES (?, ?, ?, ?, ?, ?) ";
         PreparedStatement ps = con.prepareStatement(sql);
-        ps.setInt(1, roupa.getId());
-        ps.setString(2, roupa.getTipo());
-        ps.setInt(3, roupa.getIdEstoque());
-        ps.setString(4, roupa.getMarca());
-        ps.setString(5, roupa.getTamanho());
-        ps.setString(6, roupa.getGenero());
-        ps.setInt(7, roupa.getQuantidade());
+        ps.setString(1, roupa.getTipo());
+        ps.setInt(2, 14);
+        ps.setString(3, roupa.getMarca());
+        ps.setString(4, roupa.getTamanho());
+        ps.setString(5, roupa.getGenero());
+        ps.setInt(6, roupa.getQuantidade());
         ps.execute();
         ps.close();
         con.close();
